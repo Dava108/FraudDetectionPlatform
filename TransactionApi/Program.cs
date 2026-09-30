@@ -10,8 +10,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<ITransactionService, TransactionService>();
-
 builder.Services.AddScoped<IRedisService, RedisService>();
+builder.Services.AddScoped<ITransactionCacheService, TransactionCacheService>();
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(

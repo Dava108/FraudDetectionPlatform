@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TransactionApi.Data;
 using TransactionApi.Models;
 using TransactionApi.Services;
+using TransactionApi.Tests.TestDoubles;
 using Xunit;
 
 namespace TransactionApi.Tests;
@@ -17,7 +18,8 @@ public class TransactionServiceTests
 
         await using var dbContext = new AppDbContext(options);
 
-        var service = new TransactionService(dbContext);
+        var cacheService = new FakeTransactionCacheService();
+        var service = new TransactionService(dbContext, cacheService);
 
         var transaction = new Transaction
         {
@@ -44,7 +46,8 @@ public class TransactionServiceTests
 
         await using var dbContext = new AppDbContext(options);
 
-        var service = new TransactionService(dbContext);
+        var cacheService = new FakeTransactionCacheService();
+        var service = new TransactionService(dbContext, cacheService);
 
         var transaction = new Transaction
         {
@@ -73,7 +76,8 @@ public class TransactionServiceTests
 
         await using var dbContext = new AppDbContext(options);
 
-        var service = new TransactionService(dbContext);
+        var cacheService = new FakeTransactionCacheService();
+        var service = new TransactionService(dbContext, cacheService);
 
         var result = await service.GetByIdAsync(Guid.NewGuid());
 
@@ -89,7 +93,8 @@ public class TransactionServiceTests
 
         await using var dbContext = new AppDbContext(options);
 
-        var service = new TransactionService(dbContext);
+        var cacheService = new FakeTransactionCacheService();
+        var service = new TransactionService(dbContext, cacheService);
 
         await service.CreateAsync(new Transaction
         {

@@ -4,17 +4,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace TransactionApi.Services;
 
-public class TransactionService(AppDbContext dbContext) : ITransactionService
+public class TransactionService(
+    AppDbContext dbContext,
+    ITransactionCacheService cacheService) : ITransactionService
 {
-    public async Task<Transaction> CreateAsync(Transaction transaction)
-    {
-        transaction.Id = Guid.NewGuid();
+   public async Task<Transaction> CreateAsync(Transaction transaction)
+{
+    transaction.Id = Guid.NewGuid();
 
-        dbContext.Transactions.Add(transaction);
-        await dbContext.SaveChangesAsync();
+    dbContext.Transactions.Add(transaction);
+    await dbContext.SaveChangesAsync();
 
-        return transaction;
-    }
+    await cacheService.SetAsync(transaction);
+
+    return transaction;
+}
 
     public async Task<List<Transaction>> GetAllAsync()
     {
