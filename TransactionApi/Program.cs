@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IRedisService, RedisService>();
 builder.Services.AddScoped<ITransactionCacheService, TransactionCacheService>();
-
+builder.Services.AddScoped<IKafkaProducerService, KafkaProducerService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(

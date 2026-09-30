@@ -3,10 +3,10 @@ using TransactionApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace TransactionApi.Services;
-
 public class TransactionService(
     AppDbContext dbContext,
-    ITransactionCacheService cacheService) : ITransactionService
+    ITransactionCacheService cacheService,
+    IKafkaProducerService kafkaProducer) : ITransactionService
 {
    public async Task<Transaction> CreateAsync(Transaction transaction)
 {
@@ -16,6 +16,17 @@ public class TransactionService(
     await dbContext.SaveChangesAsync();
 
     await cacheService.SetAsync(transaction);
+    await kafkaProducer.PublishAsync(
+    "transactions",
+    new TransactionApi.Events.TransactionCreatedEvent
+    {
+        TransactionId = transaction.Id,
+        Amount = transaction.Amount,
+        Currency = transaction.Currency,
+        CardId = transaction.CardId,
+        MerchantId = transaction.MerchantId,
+        Timestamp = transaction.Timestamp
+    });
 
     return transaction;
 }

@@ -3,6 +3,7 @@ using TransactionApi.Data;
 using TransactionApi.Models;
 using TransactionApi.Services;
 using TransactionApi.Tests.TestDoubles;
+
 using Xunit;
 
 namespace TransactionApi.Tests;
@@ -19,7 +20,12 @@ public class TransactionServiceTests
         await using var dbContext = new AppDbContext(options);
 
         var cacheService = new FakeTransactionCacheService();
-        var service = new TransactionService(dbContext, cacheService);
+        var kafkaProducer = new FakeKafkaProducerService();
+
+        var service = new TransactionService(
+            dbContext,
+            cacheService,
+            kafkaProducer);
 
         var transaction = new Transaction
         {
@@ -47,7 +53,12 @@ public class TransactionServiceTests
         await using var dbContext = new AppDbContext(options);
 
         var cacheService = new FakeTransactionCacheService();
-        var service = new TransactionService(dbContext, cacheService);
+        var kafkaProducer = new FakeKafkaProducerService();
+
+        var service = new TransactionService(
+            dbContext,
+            cacheService,
+            kafkaProducer);
 
         var transaction = new Transaction
         {
@@ -77,7 +88,12 @@ public class TransactionServiceTests
         await using var dbContext = new AppDbContext(options);
 
         var cacheService = new FakeTransactionCacheService();
-        var service = new TransactionService(dbContext, cacheService);
+        var kafkaProducer = new FakeKafkaProducerService();
+
+        var service = new TransactionService(
+            dbContext,
+            cacheService,
+            kafkaProducer);
 
         var result = await service.GetByIdAsync(Guid.NewGuid());
 
@@ -93,7 +109,12 @@ public class TransactionServiceTests
         await using var dbContext = new AppDbContext(options);
 
         var cacheService = new FakeTransactionCacheService();
-        var service = new TransactionService(dbContext, cacheService);
+        var kafkaProducer = new FakeKafkaProducerService();
+
+        var service = new TransactionService(
+            dbContext,
+            cacheService,
+            kafkaProducer);
 
         var transaction = new Transaction
         {
@@ -127,7 +148,12 @@ public class TransactionServiceTests
         await using var dbContext = new AppDbContext(options);
 
         var cacheService = new FakeTransactionCacheService();
-        var service = new TransactionService(dbContext, cacheService);
+        var kafkaProducer = new FakeKafkaProducerService();
+
+        var service = new TransactionService(
+            dbContext,
+            cacheService,
+            kafkaProducer);
 
         await service.CreateAsync(new Transaction
         {
