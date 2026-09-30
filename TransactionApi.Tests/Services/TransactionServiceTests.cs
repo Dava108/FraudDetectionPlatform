@@ -83,6 +83,39 @@ public class TransactionServiceTests
 
         Assert.Null(result);
     }
+    [Fact]
+    public async Task GetByIdAsync_ShouldReturnCachedTransaction()
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString())
+            .Options;
+
+        await using var dbContext = new AppDbContext(options);
+
+        var cacheService = new FakeTransactionCacheService();
+        var service = new TransactionService(dbContext, cacheService);
+
+        var transaction = new Transaction
+        {
+            Id = Guid.NewGuid(),
+            Amount = 3000,
+            Currency = "MXN",
+            CardId = "cached-card",
+            MerchantId = "cached-merchant"
+        };
+
+        await cacheService.SetAsync(transaction);
+
+        var result = await service.GetByIdAsync(transaction.Id);
+
+        Assert.NotNull(result);
+        Assert.Equal(transaction.Id, result.Id);
+        Assert.Equal(3000, result.Amount);
+        Assert.Equal("cached-card", result.CardId);
+    }
+
+
+
 
     [Fact]
     public async Task GetAllAsync_ShouldReturnAllTransactions()

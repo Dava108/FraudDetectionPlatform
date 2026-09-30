@@ -25,7 +25,21 @@ public class TransactionService(
         return await dbContext.Transactions.ToListAsync();
     }
     public async Task<Transaction?> GetByIdAsync(Guid id)
+{
+    var cachedTransaction = await cacheService.GetAsync(id);
+
+    if (cachedTransaction is not null)
     {
-    return await dbContext.Transactions.FindAsync(id);
+        return cachedTransaction;
     }
+
+    var transaction = await dbContext.Transactions.FindAsync(id);
+
+    if (transaction is not null)
+    {
+        await cacheService.SetAsync(transaction);
+    }
+
+    return transaction;
+}
 }
